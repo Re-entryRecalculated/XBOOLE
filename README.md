@@ -1,1 +1,1 @@
-# XBOOLE
+# This repository contains the source code of the problem programs for the software XBOOLE as references of the article "Re-entry Recalculated - Where Geroge Spencer-Brown went wrong". The manuscript is currently under review in the journal and the abstract will be added here after publication.
