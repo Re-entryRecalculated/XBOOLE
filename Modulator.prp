@@ -1,0 +1,259 @@
+; reset XBOOLE system
+new
+; define space with maximal 32 Boolean variables 
+space 32 1
+
+; define all a and all marker as Boolean variables
+; introduce two additional variables m6x, m8x for next step values of m6, m8
+; state transition means (m6, m8) --> (m6x, m8x)
+; m6, m8 are read only
+; m6x, m8x are write only
+avar 1
+a m1 m2 m3 m4 m5 m6 m7 m8 m6x m8x.
+
+; define all Boolean functions for every marker
+sbe 1 101
+m1=/(a+m8).
+sbe 1 102
+m2=/(m1+m6).
+sbe 1 103
+m3=/(m1+m2).
+sbe 1 104
+m4=/(m3+m8).
+sbe 1 105
+m5=/(a+m4).
+sbe 1 106
+m6x=/(m2+m5).
+sbe 1 107
+m7=/(m5+m6).
+sbe 1 108
+m8x=/(m4+m7).
+
+; project all marker TVL into the shared space of all variables
+; by intersection with a TVL representing all vectors into shared space
+tin 1 1000
+a m1 m2 m3 m4 m5 m6 m7 m8 m6x m8x.
+-----------.
+
+; intersect all marker TVL with the TVL representing all vectors
+; for projection into shared space of all variables
+isc 101 1000 101
+isc 102 1000 102
+isc 103 1000 103
+isc 104 1000 104
+isc 105 1000 105
+isc 106 1000 106
+isc 107 1000 107
+isc 108 1000 108
+
+; calculate global phase list TVL10 stepwise as intersection of all Boolean functions
+; by storing the tempory results in TVL1002 till TVL1007
+isc 101 102 1002
+isc 1002 103 1003
+isc 1003 104 1004
+isc 1004 105 1005
+isc 1005 106 1006
+isc 1006 107 1007
+isc 1007 108 110
+obbc 110
+
+; identify with TVL112 all stable stables of the global phase list
+; if (m6, m8) = (m6x, m8x) then the state doesn't change and is stable
+sbe 1 111
+(m6=m6x)&(m8=m8x).
+isc 110 111 112
+obbc 112
+
+; display global phase list TVL114 as dependent on all 8 marker variables
+; delete all columns of not a, m6x, m8x
+; TVL112 shows 8 vectors that denote 4 stable stable states and 8 transitions of the Modulator
+vtin 1 113
+a m6x m8x.
+maxk 112 113 114
+obbc 114
+
+; define all transitions between internal state variables
+; from (m6, m8) --> (m6x, m8x)
+
+; TVL121-TVL128 represent all 8 transitions realized by the Modulator
+; 00 --> 00
+tin 1 121
+m6 m8 m6x m8x.
+0000.
+; 00 --> 10
+tin 1 122
+m6 m8 m6x m8x.
+0010.
+; 10 --> 10
+tin 1 123
+m6 m8 m6x m8x.
+1010.
+; 10 --> 11
+tin 1 124
+m6 m8 m6x m8x.
+1011.
+; 11 --> 11
+tin 1 125
+m6 m8 m6x m8x.
+1111.
+; 11 --> 01
+tin 1 126
+m6 m8 m6x m8x.
+1101.
+; 01 --> 01
+tin 1 127
+m6 m8 m6x m8x.
+0101.
+; 01 --> 00
+tin 1 128
+m6 m8 m6x m8x.
+0100.
+
+; TVL131-TVL138 represent all 8 transitions not realized by the Modulator
+; 00 --> 01
+tin 1 131
+m6 m8 m6x m8x.
+0001.
+; 00 --> 11
+tin 1 132
+m6 m8 m6x m8x.
+0011.
+; 01 --> 10
+tin 1 133
+m6 m8 m6x m8x.
+0110.
+; 01 --> 11
+tin 1 134
+m6 m8 m6x m8x.
+0111.
+; 10 --> 00
+tin 1 135
+m6 m8 m6x m8x.
+1000.
+; 10 --> 01
+tin 1 136
+m6 m8 m6x m8x.
+1001.
+; 11 --> 00
+tin 1 137
+m6 m8 m6x m8x.
+1100.
+; 11 --> 10
+tin 1 138
+m6 m8 m6x m8x.
+1110.
+
+; calculate all edges of the automata as trasitions based on global phase list TVL110 
+; show all edges of the automaton as dependend from input variables, only
+vtin 1 150
+m1 m2 m3 m4 m5 m6 m7 m8 m6x m8x.
+
+; 8 main transitions
+; check at run-time that TVL151-TVL158 are dependend from input variable a, only
+isc 110 121 141
+maxk 141 150 151
+obbc 151
+
+isc 110 122 142
+maxk 142 150 152
+obbc 152
+
+isc 110 123 143
+maxk 143 150 153
+obbc 153
+
+isc 110 124 144
+maxk 144 150 154
+obbc 154
+
+isc 110 125 145
+maxk 145 150 155
+obbc 155
+
+isc 110 126 146
+maxk 146 150 156
+obbc 156
+
+isc 110 127 147
+maxk 147 150 157
+obbc 157
+
+isc 110 128 148
+maxk 148 150 158
+obbc 158
+
+; 8 empty transitions
+; check at run-time that TVL171-TVL178 are empty
+isc 110 131 161
+maxk 161 150 171
+obbc 171
+
+isc 110 132 162
+maxk 162 150 172
+obbc 172
+
+isc 110 133 163
+maxk 163 150 173
+obbc 173
+
+isc 110 134 164
+maxk 164 150 174
+obbc 174
+
+isc 110 135 165
+maxk 165 150 175
+obbc 175
+
+isc 110 136 166
+maxk 166 150 176
+obbc 176
+
+isc 110 137 167
+maxk 167 150 177
+obbc 177
+
+isc 110 138 168
+maxk 168 150 178
+obbc 178
+
+; all 8 empty transitions should result in an empty unification
+; check at run-time that TVL179 must be empty
+uni 171 172 179
+uni 179 173 179
+uni 179 174 179
+uni 179 175 179
+uni 179 176 179
+uni 179 177 179
+uni 179 178 179
+obbc 179
+
+; calculate all input vector leading to stable internal state 00 (main transitions only)
+; 00 --> 00
+; 01 --> 00
+isc 151 158 181
+obbc 181
+
+; calculate all input vector leading to stable internal state 10 (main transitions only)
+; 00 --> 10
+; 10 --> 10
+isc 152 153 182
+obbc 182
+
+; calculate all input vector leading to stable internal state 11 (main transitions only)
+; 10 --> 11
+; 11 --> 11
+isc 154 155 183
+obbc 183
+
+; calculate all input vector leading to stable internal state 01 (main transitions only)
+; 11 --> 01
+; 01 --> 01
+isc 156 157 184
+obbc 184
+
+; calculate all partial automata graphs and check if all input vecors are covered
+; check at run-time that TVL185 should be all -
+uni 181 182 185
+uni 185 183 185
+uni 185 184 185
+obbc 185
